@@ -1,6 +1,7 @@
 package utfpr.ct.dainf.if62c.avaliacao;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Timer;
 
@@ -37,22 +38,37 @@ public class Agenda {
     }
     
     public void novoAviso(Compromisso compromisso, int antecedencia) {
-
+        Aviso a = new Aviso(compromisso);
+        compromisso.registraAviso(a);
+        timer.schedule(a, new Date(compromisso.getData().getTime() 
+                - antecedencia*1000));
+              
+        /*compromisso.registraAviso(new Aviso(new Compromisso(new Date(compromisso.getData().getTime()
+                - antecedencia*1000), compromisso.getDescricao())));*/
     }
     
     public void novoAviso(Compromisso compromisso, int antecedencia, int intervalo) {
-    
+        Aviso a = new Aviso(compromisso);
+        compromisso.registraAviso(a);
+        timer.scheduleAtFixedRate(a, new Date(compromisso.getData().getTime() 
+                - antecedencia*1000), intervalo*1000);
     }
     
     public void cancela(Compromisso compromisso) {
-
+        for(Aviso a : compromisso.getAvisos())
+        {
+            a.cancel();
+        }
+        
+        compromissos.remove(compromisso);
     }
     
     public void cancela(Aviso aviso) {
-    
+        aviso.cancel();
     }
     
     public void destroi() {
-    
+        timer.cancel();
+        timer.purge();
     }
 }
